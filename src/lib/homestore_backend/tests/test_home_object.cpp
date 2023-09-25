@@ -40,12 +40,12 @@ public:
         device_info.emplace_back(std::filesystem::canonical(fpath));
         return device_info;
     }
-    homeobject::peer_id discover_svcid(std::optional< homeobject::peer_id > const&) const override {
+    homeobject::peer_id_t discover_svcid(std::optional< homeobject::peer_id_t > const&) const override {
         return boost::uuids::random_generator()();
     }
     /// TODO
     /// This will have to work if we test replication in the future
-    std::string lookup_peer(homeobject::peer_id const&) const override { return "test_fixture.com"; }
+    std::string lookup_peer(homeobject::peer_id_t const&) const override { return "test_fixture.com"; }
 };
 
 TEST(HomeObject, BasicEquivalence) {

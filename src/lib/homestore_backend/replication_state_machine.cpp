@@ -4,7 +4,7 @@
 namespace homeobject {
 
 void ReplicationStateMachine::on_commit(int64_t lsn, const sisl::blob& header, const sisl::blob& key,
-                                        const home_replication::pba_list_t& pbas, void* ctx) {
+                                        const homestore::MultiBlkId& pbas, repl_req_ctx* ctx) {
     LOGINFO("applying raft log commit with lsn:{}", lsn);
     const ReplicationMessageHeader* msg_header = r_cast< const ReplicationMessageHeader* >(header.bytes);
 
@@ -21,7 +21,8 @@ void ReplicationStateMachine::on_commit(int64_t lsn, const sisl::blob& header, c
     }
 }
 
-void ReplicationStateMachine::on_pre_commit(int64_t lsn, sisl::blob const& header, sisl::blob const& key, void* ctx) {
+void ReplicationStateMachine::on_pre_commit(int64_t lsn, sisl::blob const& header, sisl::blob const& key,
+                                            repl_req_ctx* ctx) {
     LOGINFO("on_pre_commit with lsn:{}", lsn);
     const ReplicationMessageHeader* msg_header = r_cast< const ReplicationMessageHeader* >(header.bytes);
 
@@ -38,7 +39,8 @@ void ReplicationStateMachine::on_pre_commit(int64_t lsn, sisl::blob const& heade
     }
 }
 
-void ReplicationStateMachine::on_rollback(int64_t lsn, sisl::blob const& header, sisl::blob const& key, void* ctx) {
+void ReplicationStateMachine::on_rollback(int64_t lsn, sisl::blob const& header, sisl::blob const& key,
+                                          repl_req_ctx* ctx) {
     LOGINFO("rollback with lsn:{}", lsn);
     const ReplicationMessageHeader* msg_header = r_cast< const ReplicationMessageHeader* >(header.bytes);
 
@@ -53,6 +55,10 @@ void ReplicationStateMachine::on_rollback(int64_t lsn, sisl::blob const& header,
         break;
     }
     }
+}
+
+homestore::blk_alloc_hints ReplicationStateMachine::get_blk_alloc_hints(sisl::blob const& header, repl_req_ctx* ctx) {
+    // TODO: Return blk_alloc_hints specific to create shard or blob put
 }
 
 void ReplicationStateMachine::on_replica_stop() {}

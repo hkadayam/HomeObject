@@ -13,5 +13,5 @@ target_link_libraries(${PROJECT_NAME}_core
         )
 
 
-add_subdirectory(homestore)
-add_subdirectory(memory)
+add_subdirectory(homestore_backend)
+add_subdirectory(memory_backend)

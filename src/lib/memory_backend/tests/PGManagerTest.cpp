@@ -22,10 +22,10 @@ public:
     bool spdk_mode() const override { return false; }
     uint32_t threads() const override { return 2; }
     std::list< std::filesystem::path > devices() const override { return std::list< std::filesystem::path >(); }
-    homeobject::peer_id discover_svcid(std::optional< homeobject::peer_id > const& p) const override {
+    homeobject::peer_id_t discover_svcid(std::optional< homeobject::peer_id_t > const& p) const override {
         return p.value();
     }
-    std::string lookup_peer(homeobject::peer_id const&) const override { return "test_fixture.com"; }
+    std::string lookup_peer(homeobject::peer_id_t const&) const override { return "test_fixture.com"; }
 };
 
 class PgManagerFixture : public ::testing::Test {
@@ -58,9 +58,9 @@ TEST_F(PgManagerFixture, CreatePgNotMember) {
 
 class PgManagerFixtureWPg : public PgManagerFixture {
 public:
-    homeobject::pg_id _pg_id{1u};
-    homeobject::peer_id _peer1;
-    homeobject::peer_id _peer2;
+    homeobject::pg_id_t _pg_id{1u};
+    homeobject::peer_id_t _peer1;
+    homeobject::peer_id_t _peer2;
 
     void SetUp() override {
         PgManagerFixture::SetUp();

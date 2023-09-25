@@ -2,13 +2,13 @@
 
 namespace homeobject {
 
-ShardIndex& MemoryHomeObject::_find_index(shard_id shard) const {
+ShardIndex& MemoryHomeObject::_find_index(shard_id_t shard) const {
     auto index_it = _in_memory_index.find(shard);
     RELEASE_ASSERT(_in_memory_index.end() != index_it, "Missing BTree!!");
     return *index_it->second;
 }
 
-BlobManager::Result< blob_id > MemoryHomeObject::_put_blob(ShardInfo const& shard, Blob&& blob) {
+BlobManager::Result< blob_id_t > MemoryHomeObject::_put_blob(ShardInfo const& shard, Blob&& blob) {
     // Lookup Shard Index (BTree and SSN)
     auto& our_shard = _find_index(shard.id);
 
@@ -28,7 +28,7 @@ BlobManager::Result< blob_id > MemoryHomeObject::_put_blob(ShardInfo const& shar
     return route.blob;
 }
 
-BlobManager::Result< Blob > MemoryHomeObject::_get_blob(ShardInfo const& shard, blob_id blob) const {
+BlobManager::Result< Blob > MemoryHomeObject::_get_blob(ShardInfo const& shard, blob_id_t blob) const {
     // Lookup Shard Index (BTree and SSN)
     auto& our_shard = _find_index(shard.id);
 
@@ -50,7 +50,7 @@ BlobManager::Result< Blob > MemoryHomeObject::_get_blob(ShardInfo const& shard, 
     return ext_blob._blob->clone();
 }
 
-BlobManager::NullResult MemoryHomeObject::_del_blob(ShardInfo const& shard, blob_id id) {
+BlobManager::NullResult MemoryHomeObject::_del_blob(ShardInfo const& shard, blob_id_t id) {
     // Lookup Shard Index (BTree and SSN)
     auto& our_shard = _find_index(shard.id);
 

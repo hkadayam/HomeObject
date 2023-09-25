@@ -16,7 +16,7 @@
 #include "lib/homestore/replication_state_machine.hpp"
 #include "mocks/mock_replica_set.hpp"
 
-using homeobject::shard_id;
+using homeobject::shard_id_t;
 using homeobject::ShardError;
 using homeobject::ShardInfo;
 
@@ -40,18 +40,18 @@ public:
         device_info.emplace_back(std::filesystem::canonical(fpath));
         return device_info;
     }
-    homeobject::peer_id discover_svcid(std::optional< homeobject::peer_id > const&) const override {
+    homeobject::peer_id_t discover_svcid(std::optional< homeobject::peer_id_t > const&) const override {
         return boost::uuids::random_generator()();
     }
-    std::string lookup_peer(homeobject::peer_id const&) const override { return "test_fixture.com"; }
+    std::string lookup_peer(homeobject::peer_id_t const&) const override { return "test_fixture.com"; }
 };
 
 class ShardManagerTesting : public ::testing::Test {
 public:
-    homeobject::pg_id _pg_id{1u};
-    homeobject::peer_id _peer1;
-    homeobject::peer_id _peer2;
-    homeobject::shard_id _shard_id{100u};
+    homeobject::pg_id_t _pg_id{1u};
+    homeobject::peer_id_t _peer1;
+    homeobject::peer_id_t _peer2;
+    homeobject::shard_id_t _shard_id{100u};
 
     void SetUp() override {
         app = std::make_shared< FixtureApp >();
@@ -137,7 +137,7 @@ TEST_F(ShardManagerWithShardsTesting, CreateShardAndValidateMembers) {
     auto pg_iter = ho->_pg_map.find(_pg_id);
     EXPECT_TRUE(pg_iter != ho->_pg_map.end());
     auto& pg = pg_iter->second;
-    EXPECT_TRUE(pg.shard_sequence_num == 1);
+    EXPECT_TRUE(pg.shard_sequence_num_ == 1);
     EXPECT_EQ(1, pg.shards.size());
     auto& shard = *pg.shards.begin();
     EXPECT_TRUE(shard.info == shard_info);
@@ -176,8 +176,8 @@ TEST_F(ShardManagerWithShardsTesting, RollbackCreateShard) {
     auto shard_info = ShardInfo(100, _pg_id, ShardInfo::State::OPEN, create_time, create_time, Mi, Mi, 0);
     auto shard = homeobject::Shard(shard_info);
     nlohmann::json j;
-    j["shard_info"]["shard_id"] = shard.info.id;
-    j["shard_info"]["pg_id"] = shard.info.placement_group;
+    j["shard_info"]["shard_id_t"] = shard.info.id;
+    j["shard_info"]["pg_id_t"] = shard.info.placement_group;
     j["shard_info"]["state"] = shard.info.state;
     j["shard_info"]["created_time"] = shard.info.created_time;
     j["shard_info"]["modified_time"] = shard.info.last_modified_time;
@@ -214,8 +214,8 @@ TEST_F(ShardManagerWithShardsTesting, RollbackCreateShardV2) {
     auto shard_info = ShardInfo(100, _pg_id, ShardInfo::State::OPEN, create_time, create_time, Mi, Mi, 0);
     auto shard = homeobject::Shard(shard_info);
     nlohmann::json j;
-    j["shard_info"]["shard_id"] = shard.info.id;
-    j["shard_info"]["pg_id"] = shard.info.placement_group;
+    j["shard_info"]["shard_id_t"] = shard.info.id;
+    j["shard_info"]["pg_id_t"] = shard.info.placement_group;
     j["shard_info"]["state"] = shard.info.state;
     j["shard_info"]["created_time"] = shard.info.created_time;
     j["shard_info"]["modified_time"] = shard.info.last_modified_time;
@@ -257,8 +257,8 @@ TEST_F(ShardManagerWithShardsTesting, MockSealShard) {
     auto shard = homeobject::Shard(shard_info);
     shard.info.state = ShardInfo::State::SEALED;
     nlohmann::json j;
-    j["shard_info"]["shard_id"] = shard.info.id;
-    j["shard_info"]["pg_id"] = shard.info.placement_group;
+    j["shard_info"]["shard_id_t"] = shard.info.id;
+    j["shard_info"]["pg_id_t"] = shard.info.placement_group;
     j["shard_info"]["state"] = shard.info.state;
     j["shard_info"]["created_time"] = shard.info.created_time;
     j["shard_info"]["modified_time"] = shard.info.last_modified_time;
@@ -350,8 +350,8 @@ TEST_F(ShardManagerWithShardsTesting, ShardManagerRecovery) {
     EXPECT_EQ(_pg_id, shard_info.placement_group);
 
     nlohmann::json shard_json;
-    shard_json["shard_info"]["shard_id"] = shard_info.id;
-    shard_json["shard_info"]["pg_id"] = shard_info.placement_group;
+    shard_json["shard_info"]["shard_id_t"] = shard_info.id;
+    shard_json["shard_info"]["pg_id_t"] = shard_info.placement_group;
     shard_json["shard_info"]["state"] = shard_info.state;
     shard_json["shard_info"]["created_time"] = shard_info.created_time;
     shard_json["shard_info"]["modified_time"] = shard_info.last_modified_time;
